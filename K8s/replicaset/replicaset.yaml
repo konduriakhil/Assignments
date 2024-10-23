@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx
+spec:
+  minReadySeconds: 10
+  replicas: 3
+  selector: 
+    matchLabels:
+      env: dev
+      app: nginx
+  template:
+    metadata: 
+      labels:
+        env: dev
+        app: nginx
+      name: nginx-template
+    spec:
+      containers:
+        - image: nginx:latest
+          name: nginx-container
+          ports:
+            - name: httport
+              containerPort: 80
+              protocol: TCP
+          resources:
+            limits:
+              memory: 400Mi
+              cpu: 0.5
+            requests:
+              memory: 200Mi
+              cpu: 0.25

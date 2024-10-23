@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: testingpod
+  labels:
+    env: dev
+spec:
+  containers:
+  - name: bookstest-db
+    image: postgres:15-alpine
+    ports:
+      - containerPort: 5432
+    env:
+      - name: POSTGRES_USER
+        value: userss
+      - name: POSTGRES_PASSWORD
+        value: passwordddd
+      - name: POSTGRES_DB
+        value: booksdbd
+    resources:
+      requests:
+        cpu: 0.24
+        memory: 250Mi
+      limits: 
+        cpu: 0.43
+        memory: 600Mi

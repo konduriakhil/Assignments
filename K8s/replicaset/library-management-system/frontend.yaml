@@ -1,0 +1,48 @@
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: frontend
+spec:
+  minReadySeconds: 5
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata: 
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: shaikkhajaibrahim/libwebstore:1.0
+          resources:
+            requests:
+              cpu: 0.2
+              memory: 250Mi
+            limits:
+              cpu: 0.5
+              memory: 500Mi          
+          env:
+            - name: REACT_APP_BACKEND_API_URL
+              value: http://users-service:8000/api/v1
+            - name: REACT_APP_BOOKS_API_URL
+              value: http://books-service:8000/api/v1/books
+            - name: REACT_APP_USERS_API_URL
+              value: http://users-service:8000/api/v1/users
+          ports:
+            - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:   
+  type: LoadBalancer
+  selector:
+    app: frontend         
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30000

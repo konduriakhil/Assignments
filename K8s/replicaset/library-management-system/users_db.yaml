@@ -1,0 +1,46 @@
+--- 
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: users-db-svc
+spec:
+  minReadySeconds: 5
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users-db
+  template:
+    metadata:
+      labels:
+        app: users-db
+    spec:
+      containers:
+        - name: users-db
+          image: postgres:15-alpine
+          env:
+            - name: POSTGRES_USER
+              value: user
+            - name: POSTGRES_PASSWORD
+              value: password
+            - name: POSTGRES_DB
+              value: usersdb
+          resources:
+            requests:
+              cpu: 0.1
+              memory: 250Mi
+            limits:
+              cpu: 0.3
+              memory: 500Mi
+          ports:
+            - containerPort: 5433
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: users-db
+spec:
+  selector:
+    app: users-db 
+  ports:
+    - port: 5433
+      targetPort: 5433

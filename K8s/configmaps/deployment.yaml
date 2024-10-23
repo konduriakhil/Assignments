@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deploy
+  annotations:
+
+spec:
+  minReadySeconds: 3
+  replicas: 4
+  selector:
+    matchLabels:
+      app: web
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata: 
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web
+          image: konduri/lib:1
+          resources:
+            requests:
+              cpu: 0.1
+              memory: 120Mi
+            limits:
+              cpu: 0.6
+              memory: 650Mi
+          ports:
+            - containerPort: 3000
+          envFrom:
+            configMapRef:
+              name: frontend-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-svc
+spec:
+  type: NodePort
+  selector:
+    ports:
+      - port: 3000
+        targetPort: 3000
+        nodePort: 32767
